@@ -1,4 +1,229 @@
+Prerequisites
+
+Maven (tested with version 3.0.3)
+
+Building
+
 Build using maven, eg.
 
+from top level directory
 mvn install
 mvn site:site will provide documentation
+
+
+
+The Cache Aspect provide a means of caching at method level with annotations. The actual caching implementation is independent of the annotations allowing you to plug in a simple memory based cache, an ehache based cache or a Mecached based cache. By implementing uk.ltd.woodsideconsultancy.aop.cache.CacheInterface you can also implement your own caching.
+Using the component
+
+This aspect should only be applied to impl projects which use the annotations.
+dependencies
+
+1. Add the following dependency to your impl project pom
+
+					<dependency>
+					  <groupId>uk.ltd.woodsideconsultancy.aop</groupId>
+					  <artifactId>cache-aop</artifactId>
+					  <version>0.1</version>
+					   <scope>provided</scope>
+					</dependency<
+				
+				
+Please update version info according to release then add which ever cache implementation you require:- a) For projects requiring mecached based caching.
+
+					<dependency>
+					  <groupId>uk.ltd.woodsideconsultancy.aop</groupId>
+					  <artifactId>cache-impl-memcached</artifactId>
+					  <version>0.1</version>
+					   <scope>provided</scope>
+					</dependency><
+
+				
+b) For projects requiring ehcache based caching
+
+					<dependency>
+					  <groupId>uk.ltd.woodsideconsultancy.aop</groupId>
+					  <artifactId>cache-impl-ehcache</artifactId>
+					  <version>0.1</version>
+					   <scope>provided</scope>
+					</dependency><
+				
+				
+c) For projects requiring a simple memory based cache. Please note there is no limit applied to the size of this cache implementation.
+
+					<dependency>
+					  <groupId>uk.ltd.woodsideconsultancy.aop</groupId>
+					  <artifactId>cache-impl-simple</artifactId>
+					  <version>0.1</version>
+					   <scope>provided</scope>
+					</dependency><
+				
+				
+d) For projects requiring a memcached based cache. Please note there is no limit applied to the size of this cache implementation.
+
+					<dependency>
+					  <groupId>uk.ltd.woodsideconsultancy.aop</groupId>
+					  <artifactId>cache-impl-memcached</artifactId>
+					  <version>0.1</version>
+					   <scope>provided</scope>
+					</dependency><
+				
+				
+jdk
+
+2. Make sure your pom specifies java 1.5 or later as the build JDK. Ensure the maven plugin is configured as below
+
+				  <build>
+					<plugins>
+						
+						<plugin>
+							<artifactId>maven-compiler-plugin</artifactId>
+							<configuration>
+								<source>1.5</source>
+								<target>1.5</target>
+								<encoding>UTF-8</encoding>
+							</configuration>
+						</plugin>
+					</plugins>
+				   </build>
+				
+compilation
+
+3. Add the aspect to your compilation phase of the impl project. Ensure the following is in the impl pom
+
+					<plugin>
+				  		<groupId>org.codehaus.mojo</groupId>
+				  		<artifactId>aspectj-maven-plugin</artifactId>
+				  		<version>1.2</version>
+				  		<configuration> 
+				  			<complianceLevel>1.5</complianceLevel> 
+				  			<weaveDependencies>
+				  				<weaveDependency> 
+				  					<groupId>uk.ltd.woodsideconsultancy.aop</groupId>
+				  					<artifactId>cache-aop</artifactId>
+				  				</weaveDependency>
+				  			</weaveDependencies> 
+				 		</configuration> 
+				 		<executions>
+				 			<execution>
+				 				<goals>
+				  					<goal>compile</goal>
+				  					<goal>test-compile</goal> 
+				  				</goals> 
+				  			</execution>
+				  		</executions> 
+				  </plugin>
+				
+configuration
+
+4. You also need to inject the caching implementation into the aspect. In your start up code you can add:- This can be done programatically as below or via annotations. For example,
+
+					@CacheImplementation
+					private CacheInterface hashMapBasedCache;
+					@CacheImplementation(name="othercaching")
+					private CacheInterface anotherCacheImpl;
+				
+when you assign values to the CacheInterface these will configure the actual implementation. For example in your constructor you might add,
+
+					public MyConstructor(){
+						super();
+						this.hashMapBasedCache = new HashMapBasedCache();
+				
+Please note if you want to autowire this with Spring then use method based autowiring e.g.
+
+					@CacheImplementation
+					private CacheInterface cacheInterface;
+					
+					@Autowired
+					public setCacheImplementation(CacheInterface cacheInterface){
+						this.cacheInterface = cacheInterface;
+					}
+				
+a) For Memcached
+
+						private static CacheAdaptor adaptor;
+
+							
+						if(adaptor==null){
+							adaptor = CacheAdaptor.getInstance();
+							adaptor.setCachingImplementation(new MemcachedBasedCache());
+						}
+				
+b) For Ehcache example which initializes the cache. Should you be using a component that already does this. For example common codes then you do not need to call the create method on the CacheManager as common codes will do this for you.
+
+						private static CacheAdaptor adaptor;
+
+							
+						if(adaptor==null){
+							adaptor = CacheAdaptor.getInstance();
+							URL configurationFileURL = getClass().getResource("ehcache.xml");
+							CacheManager manager = CacheManager.create(configurationFileURL);
+							
+							adaptor.setCachingImplementation(new EhcacheBasedCache());
+						}
+				
+Please add an entry for each named cache you have into ehcache.xml or the config for your project. For example the test project for ehcache uses.
+
+					<cache name="uk.ltd.woodsideconsultancy.test.Country.Cache"
+						maxElementsInMemory="5000"
+						eternal="false"
+						overflowToDisk="false"
+						timeToIdleSeconds="10800"
+						timeToLiveSeconds="10800">
+					</cache>
+				
+c) For simple cache implementation
+
+						private static CacheAdaptor adaptor;
+
+							
+						if(adaptor==null){
+							adaptor = CacheAdaptor.getInstance();
+							adaptor.setCachingImplementation(new HashMapBasedCache());
+						}
+				
+d) For simple cache memory limited implementation
+
+						private static CacheAdaptor adaptor;
+
+							
+						if(adaptor==null){
+							adaptor = CacheAdaptor.getInstance();
+							SizedMapBasedCache cache = new SizedMapBasedCache();
+							cache.setMaxCaches(10);
+							cache.setMaxEntriesPerCache(100);
+							cache.setMaxDuration(3600L);
+							adaptor.setCachingImplementation(cache);
+						}
+				
+Please note you may have more than one caching implementation per application. e.g. Map<String,CacheInterface>map = new HashMap<String,CacheInterface>(); map.put("othercaching", new HashMapBasedCache()); adaptor.setCachingImplementations(map); See cache-test example for more details e) Example with memcached and Spring:-
+
+					<!-- initialise cache -->
+						<bean id="uk.ltd.woodsideconsultancy.aop.cache.memcachedBasedCache" class="uk.ltd.woodsideconsultancy.aop.cache.MemcachedBasedCache" /> 
+						<bean id="uk.ltd.woodsideconsultancy.aop.cache.cacheAdaptor" class="uk.ltd.woodsideconsultancy.aop.cache.CacheAdaptor"  
+							factory-method="getInstance">  
+							<property name="cachingImplementation" ref="uk.ltd.woodsideconsultancy.aop.cache.memcachedBasedCache"/>
+						</bean>
+					
+cache keys
+
+5. The cache adaptor generates keys for your cache based on the default StringKeyMaker. However you can add you own on a per cache base where for example you know that ids for an entity will suffice as a key. This can be done programatically via the methods in the CacheAdaptor which are similar to the ones used for the caching implementations or via annotations. You must implement the KeyMaker interface if you wish to do this. For example,
+
+						private static final String ANOTHER_CACHE = "myCacheName";
+
+						@KeyMakerImplementation
+						private KeyMaker keyMaker;
+					
+						@KeyMakerImplementation(name=ANOTHER_CACHE)
+						private KeyMaker anotherKeyMaker;
+						
+						public void setupCache(){
+							keyMaker = new MyKeyMaker();
+							anotherKeyMaker = new MyKeyMaker();
+						}
+						// or autowired for Spring
+						@Autowired
+						public void setKeyMaker(KeyMaker keyMaker){
+							this.keyMaker = keyMaker;
+						}
+				
+© 2013 Woodside Consultancy Limited
