@@ -1,0 +1,32 @@
+<document>
+	<properties>
+		<author email="">Gary Bennett</author>
+		<title>How To</title>
+	</properties>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<title>Cache Aspects</title>
+	</head>
+	<body>
+		<section name="Cache Aspects - Limitations">
+		
+
+		
+	
+		<h2>Known limitations</h2>
+	
+			<subsection name="Testing with Eclipse">
+
+				Building the aspects with Eclipse may show unit test failures. This depends on 
+				how the Eclipse projects was created. In order for the Aspects to work they must
+				be compiled in by the Maven AspectJ plugin. If you wish to test the actual aspects
+				in Eclipse then I'd recommend the AJDT plugin. You may also need to build with maven
+				then run the tests in Eclipse. 
+				
+				The issue is that a normal Eclipse build does not apply aspects.		
+			</subsection>
+			
+
+		</section> 
+	</body>
+</document>

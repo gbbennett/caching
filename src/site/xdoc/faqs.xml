@@ -1,0 +1,29 @@
+<document>
+	<properties>
+		<author email="">Gary Bennett</author>
+		<title>How To</title>
+	</properties>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<title>Cache Aspects</title>
+	</head>
+	<body>
+		<section name="Cache Aspects - Faqs">
+		
+
+		
+	
+		<h2>FAQ</h2>
+	
+			<subsection name="Testing with Eclipse">
+
+				Question: Why do unit tests within this project fail when ran from Eclipse?
+				
+				Answer: Eclipse does not compile in the aspects as part of it's normal build, the limitations section
+				describes this in more detail. 
+			</subsection>
+			
+
+		</section> 
+	</body>
+</document>

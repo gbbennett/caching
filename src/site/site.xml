@@ -1,0 +1,28 @@
+<project name="uk.ltd.woodsideconsultancy.aop:cache-aspect">
+
+	<publishDate format="dd MMM yyyy" />
+	<version position="right"/>
+	<body>
+		<menu ref="modules" >
+			<item name="How to guide" href="howto.html" />
+			<item name="Known bugs and limitations" href="limitation.html" />
+			<item name="FAQs" href="faqs.html"/>
+		</menu>
+		<menu ref="modules" />
+		
+		<menu ref="reports" />
+
+		<menu name="Other Resources">
+
+			<item name="Overview" href="overview.html"/>
+		</menu>
+
+	</body>
+	
+	<skin>
+		<groupId>org.apache.tapestry</groupId>
+		<artifactId>maven-skin</artifactId>
+		<version>1.2</version>
+	</skin>
+
+</project>

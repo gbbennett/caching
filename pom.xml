@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ltd.woodsideconsultancy.aop</groupId>
+    <artifactId>cache-parent</artifactId>
+    <packaging>pom</packaging>
+    <name>AOP Cache Aspects Parent</name>
+    <version>1.0.0-SNAPSHOT</version>
+
+
+  
+  	<developers>
+    	<developer>
+      	<name>Gary Bennett</name>
+      	<email></email>
+      	<roles>
+        	<role>Developer</role>
+      	</roles>
+      	<timezone>0</timezone>
+    	</developer>
+  	</developers>
+
+
+  	<organization>
+    	<name>Woodside Consultancy Limited</name>
+    	<url></url>
+  	</organization>
+  	<properties>
+  		<slf4j.version>1.6.4</slf4j.version>
+  		<log4j.version>1.2.16</log4j.version>
+  		<aspectj.version>1.6.9</aspectj.version>
+  		<junit.version>4.8.2</junit.version>
+  		<mockito.version>1.8.5</mockito.version>
+  		<commons-lang.version>2.4</commons-lang.version>
+  	</properties>
+  
+  
+    <modules>
+        <module>cache-aop</module>
+        <module>cache-impl</module>
+        <module>cache-test</module>
+		<module>cache-test-war</module>
+    </modules>
+
+  	<dependencyManagement>
+		<dependencies>
+            <dependency>
+              <groupId>log4j</groupId>
+              <artifactId>log4j</artifactId>
+              <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-api</artifactId>
+              <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-log4j12</artifactId>
+              <version>${slf4j.version}</version>
+            </dependency>
+			<dependency>
+				<groupId>org.aspectj</groupId>
+				<artifactId>aspectjrt</artifactId>
+				<version>${aspectj.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.aspectj</groupId>
+				<artifactId>aspectjweaver</artifactId>
+				<version>${aspectj.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.aspectj</groupId>
+				<artifactId>aspectjtools</artifactId>
+				<version>${aspectj.version}</version>
+				<scope>provided</scope>
+			</dependency>  	
+			<dependency>
+		  		<groupId>junit</groupId>
+		  		<artifactId>junit</artifactId>
+		  		<version>${junit.version}</version>
+		  		<scope>test</scope>
+			</dependency>	
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<scope>test</scope>
+				<version>${mockito.version}</version>
+			</dependency> 
+        	<dependency>
+            	<groupId>commons-lang</groupId>
+            	<artifactId>commons-lang</artifactId>
+            	<scope>provided</scope>	
+            	<version>${commons-lang.version}</version>
+        	</dependency>
+		</dependencies>
+	</dependencyManagement>
+  	<build>
+    	<plugins>
+			<!-- Compiler -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				
+				<configuration>
+					<verbose>true</verbose>
+					<fork>true</fork>
+					<executable>${JAVA_HOME}/bin/javac</executable>
+					<compilerVersion>1.5</compilerVersion>
+					<source>1.5</source>
+					<target>1.5</target>
+
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.4</version>
+			</plugin>
+			<plugin>
+			    <groupId>org.codehaus.mojo</groupId>
+			    <artifactId>aspectj-maven-plugin</artifactId>
+			    <version>1.4</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<configuration>
+                    <skip>true</skip>
+					<stagingSiteURL>${project.distributionManagement.site.url}</stagingSiteURL>
+				</configuration>
+			</plugin>
+	  	</plugins>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-webdav</artifactId>
+				<version>1.0-beta-2</version>
+			</extension>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>1.0-beta-6</version>
+			</extension>
+		</extensions>	  
+	</build>
+	<reporting>
+		<plugins>
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<configuration>
+						<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+	  
+</project>

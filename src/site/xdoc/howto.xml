@@ -1,0 +1,404 @@
+<document>
+	<properties>
+		<author email="">Gary Bennett</author>
+		<title>How To</title>
+	</properties>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<title>Cache Aspects</title>
+	</head>
+	<body>
+		<section name="Cache Aspects - How To">
+		
+		The Cache Aspect provide a means of caching at method level with annotations.
+
+	    The actual caching implementation is independent of the annotations allowing you
+		to plug in a simple memory based cache, an ehache based cache or an IBM Dynacache
+		based cache. By implementing uk.ltd.woodsideconsultancy.aop.cache.CacheInterface you can
+		also implement your own caching.
+	
+		<h2>Using the component</h2>
+	
+		This aspect should only be applied to impl projects which use the annotations.
+			<subsection name="dependencies">
+				1. Add the following dependency to your impl project pom
+		
+				<pre>
+				<font color = 'blue'>
+					&lt;dependency&gt;
+					  &lt;groupId>uk.ltd.woodsideconsultancy.aop&lt;/groupId&gt;
+					  &lt;artifactId>cache-aop&lt;/artifactId&gt;
+					  &lt;version>0.1&lt;/version&gt;
+					   &lt;scope>provided&lt;/scope&gt;
+					&lt;/dependency>&lt;
+				
+				</font>
+				</pre>
+				Please update version info according to release then add which ever cache
+				implementation you require:-
+
+				a) For projects requiring IBM dynacache based caching.
+				
+				
+				
+				<pre>
+				<font color = 'blue'>
+					&lt;dependency&gt;
+					  &lt;groupId>uk.ltd.woodsideconsultancy.aop&lt;/groupId&gt;
+					  &lt;artifactId>cache-impl-dynacache&lt;/artifactId&gt;
+					  &lt;version>0.1&lt;/version&gt;
+					   &lt;scope>provided&lt;/scope&gt;
+					&lt;/dependency>&lt;
+					&lt;dependency&gt;
+					  &lt;groupId>uk.ltd.woodsideconsultancy.aop&lt;/groupId&gt;
+					  &lt;artifactId>cache-command-dynacache&lt;/artifactId&gt;
+					  &lt;version>0.1&lt;/version&gt;
+					   &lt;scope>provided&lt;/scope&gt;
+					&lt;/dependency>&lt;
+				</font>
+				</pre>
+				
+				b) For projects requiring ehcache based caching
+				
+				<pre>
+				<font color = 'blue'>
+					&lt;dependency&gt;
+					  &lt;groupId>uk.ltd.woodsideconsultancy.aop&lt;/groupId&gt;
+					  &lt;artifactId>cache-impl-ehcache&lt;/artifactId&gt;
+					  &lt;version>0.1&lt;/version&gt;
+					   &lt;scope>provided&lt;/scope&gt;
+					&lt;/dependency>&lt;
+				
+				</font>
+				</pre>
+				
+				c) For projects requiring a simple memory based cache. Please note
+				there is no limit applied to the size of this cache implementation.
+				<pre>
+				<font color = 'blue'>
+					&lt;dependency&gt;
+					  &lt;groupId>uk.ltd.woodsideconsultancy.aop&lt;/groupId&gt;
+					  &lt;artifactId>cache-impl-simple&lt;/artifactId&gt;
+					  &lt;version>0.1&lt;/version&gt;
+					   &lt;scope>provided&lt;/scope&gt;
+					&lt;/dependency>&lt;
+				
+				</font>
+				</pre>
+				
+				d) For projects requiring a memcached based cache. Please note
+				there is no limit applied to the size of this cache implementation.
+				<pre>
+				<font color = 'blue'>
+					&lt;dependency&gt;
+					  &lt;groupId>uk.ltd.woodsideconsultancy.aop&lt;/groupId&gt;
+					  &lt;artifactId>cache-impl-memcached&lt;/artifactId&gt;
+					  &lt;version>0.1&lt;/version&gt;
+					   &lt;scope>provided&lt;/scope&gt;
+					&lt;/dependency>&lt;
+				
+				</font>
+				</pre>
+			</subsection>
+			
+			
+			<subsection name="jdk">
+			2. Make sure your pom specifies java 1.5 or later as the build JDK. Ensure the maven plugin is configured as below
+				<pre>
+				<font color = 'blue'>
+				  &lt;build&gt;
+					&lt;plugins&gt;
+						<!-- Compiler -->
+						&lt;plugin&gt;
+							&lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+							&lt;configuration&gt;
+								&lt;source&gt;1.5&lt;/source&gt;
+								&lt;target>1.5&lt;/target&gt;
+								&lt;encoding>UTF-8&lt;/encoding&gt;
+							&lt;/configuration&gt;
+						&lt;/plugin&gt;
+					&lt;/plugins&gt;
+				   &lt;/build&gt;
+				</font>
+				</pre>
+			</subsection>
+			<subsection name="compilation">
+		
+			3. Add the aspect to your compilation phase of the impl project. Ensure the following is in the impl pom
+					
+				<pre>
+				<font color = 'blue'>
+					&lt;plugin&gt;
+				  		&lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
+				  		&lt;artifactId&gt;aspectj-maven-plugin&lt;/artifactId&gt;
+				  		&lt;version&gt;1.2&lt;/version&gt;
+				  		&lt;configuration&gt; 
+				  			&lt;complianceLevel&gt;1.5&lt;/complianceLevel&gt; 
+				  			&lt;weaveDependencies&gt;
+				  				&lt;weaveDependency&gt; 
+				  					&lt;groupId&gt;uk.ltd.woodsideconsultancy.aop&lt;/groupId&gt;
+				  					&lt;artifactId&gt;cache-aop&lt;/artifactId&gt;
+				  				&lt;/weaveDependency&gt;
+				  			&lt;/weaveDependencies&gt; 
+				 		&lt;/configuration&gt; 
+				 		&lt;executions&gt;
+				 			&lt;execution&gt;
+				 				&lt;goals&gt;
+				  					&lt;goal&gt;compile&lt;/goal&gt;
+				  					&lt;goal&gt;test-compile&lt;/goal&gt; 
+				  				&lt;/goals&gt; 
+				  			&lt;/execution&gt;
+				  		&lt;/executions&gt; 
+				  &lt;/plugin&gt;
+				</font>
+				</pre>
+			</subsection>
+			<subsection name="config">
+			
+			4. You also need to inject the caching implementation into the aspect. In your start up code you can add:-
+				
+				This can be done programatically as below or via annotations. For example, 
+				<pre>
+				<font color = 'blue'>
+					@CacheImplementation
+					private CacheInterface hashMapBasedCache;
+					@CacheImplementation(name="othercaching")
+					private CacheInterface anotherCacheImpl;
+				</font>
+				</pre>
+					when you assign values to the CacheInterface these will configure the actual implementation. For
+					example in your constructor you might add,
+				<pre>
+				<font color = 'blue'>
+					public MyConstructor(){
+						super();
+						this.hashMapBasedCache = new HashMapBasedCache();
+				</font>
+				</pre>					
+
+				Please note if you want to autowire this with Spring then use method based autowiring
+				
+				e.g.
+				<pre>
+				<font color = 'blue'>
+					@CacheImplementation
+					private CacheInterface cacheInterface;
+					
+					@Autowired
+					public setCacheImplementation(CacheInterface cacheInterface){
+						this.cacheInterface = cacheInterface;
+					}
+				</font>
+				</pre>	
+
+				a) For Dynache
+				<pre>
+				<font color = 'blue'>
+						private static CacheAdaptor adaptor;
+
+							
+						if(adaptor==null){
+							adaptor = CacheAdaptor.getInstance();
+							adaptor.setCachingImplementation(new DynamapBasedCache());
+						}
+				</font>
+				</pre>
+
+				You will also need to merge in the entry for Cachespec.xml found in the cache-impl-dynacache src/test/resource
+				directory.
+				
+				b) For Ehcache example which initializes the cache. Should you be using a component that already does this.
+				For example common codes then you do not need to call the create method on the CacheManager as common
+				codes will do this for you.
+				<pre>
+				<font color = 'blue'>
+						private static CacheAdaptor adaptor;
+
+							
+						if(adaptor==null){
+							adaptor = CacheAdaptor.getInstance();
+							URL configurationFileURL = getClass().getResource("ehcache.xml");
+							CacheManager manager = CacheManager.create(configurationFileURL);
+							
+							adaptor.setCachingImplementation(new EhcacheBasedCache());
+						}
+				</font>
+				</pre>
+
+				Please add an entry for each named cache you have into ehcache.xml or the config for your project. For example the test project
+				for ehcahce uses.
+				<pre>
+				<font color = 'blue'>
+					&lt;cache name="uk.ltd.woodsideconsultancy.test.Country.Cache"
+						maxElementsInMemory="5000"
+						eternal="false"
+						overflowToDisk="false"
+						timeToIdleSeconds="10800"
+						timeToLiveSeconds="10800"&gt;
+					&lt;/cache&gt;
+				</font>
+				</pre>
+
+				c) For simple cache implementation
+				<pre>
+				<font color = 'blue'>
+						private static CacheAdaptor adaptor;
+
+							
+						if(adaptor==null){
+							adaptor = CacheAdaptor.getInstance();
+							adaptor.setCachingImplementation(new HashMapBasedCache());
+						}
+				</font>
+				</pre>
+				
+				d) For simple cache memory limited implementation
+				<pre>
+				<font color = 'blue'>
+						private static CacheAdaptor adaptor;
+
+							
+						if(adaptor==null){
+							adaptor = CacheAdaptor.getInstance();
+							SizedMapBasedCache cache = new SizedMapBasedCache();
+							cache.setMaxCaches(10);
+							cache.setMaxEntriesPerCache(100);
+							cache.setMaxDuration(3600L);
+							adaptor.setCachingImplementation(cache);
+						}
+				</font>
+				</pre>
+				Please note you may have more than one caching implementation per application. 
+				e.g.
+				Map<String,CacheInterface>map = new HashMap<String,CacheInterface>();
+                map.put("othercaching", new HashMapBasedCache());
+                adaptor.setCachingImplementations(map);
+                
+                See cache-test example for more details
+                
+				e) Example with Dynacache and Spring:-
+				<pre>
+				<font color = 'blue'>
+					&lt;!-- initialise cache --&gt;
+						&lt;bean id="uk.ltd.woodsideconsultancy.aop.cache.dynamapBasedCache" class="uk.ltd.woodsideconsultancy.aop.cache.DynamapBasedCache" /&gt; 
+						&lt;bean id="uk.ltd.woodsideconsultancy.aop.cache.cacheAdaptor" class="uk.ltd.woodsideconsultancy.aop.cache.CacheAdaptor"  
+							factory-method="getInstance"&gt;  
+							&lt;property name="cachingImplementation" ref="uk.ltd.woodsideconsultancy.aop.cache.dynamapBasedCache"/&gt;
+						&lt;/bean&gt;
+					</font>
+				</pre>
+			</subsection>
+			<subsection name="Usage">
+			4. Usage
+			
+			The following code shows how to cache access to a method. Please note the parameters and return value of the method MUST be Serializable.
+			
+				a) Caching a method
+				<pre>
+				<font color = 'blue'>
+					@Cache(name="uk.ltd.woodsideconsultancy.test.Country.Cache")
+					public Country lookupCountry(String isoCode){
+						// code to perform the method
+					}
+				</font>
+				</pre>
+				
+				Alternatively in the following example we specify that only the first two params compose the key as these
+				have the CacheKey annotation
+				
+				<pre>
+				<font color = 'blue'>
+					@Cache(name="uk.ltd.woodsideconsultancy.test.Country.Cache")
+					public Country lookupCountry(@CacheKey String isoCode, @CacheKey String lang, boolean someOtherValue){
+						// code to perform the method
+					}
+				</font>
+				</pre>
+			
+				The first time the method is called an entry in the cache corresponding to the method parameters, in this case the isoCode, will be looked up.
+				If no entry is found the method will be called and the result cached. Subsequent calls to this method will return the cached value. The time
+				the entry in the cache lives is up to the configuration for the actual implementation you have chosen.
+				
+				b) Invalidating a cache entry
+				
+				There are two ways that an individual cache entry can be invalidated.
+				
+				i) By invalidating prior to calling a cached method, eg.
+				
+				In this example any cached method called by the method annotated with @Invalidate will
+				have it's cached entry invalidated. Ie. only the entry which matches isoCode will be 
+				invalidated
+				<pre>
+					<font color = 'blue'>
+						@Invalidate 
+						public Country lookupAnotherCountry(String isoCode){
+							return lookupCountry(isoCode);
+						}
+					</font>
+				</pre>
+				
+				ii) By specifying which parameters on a method are the keys to the cache
+				
+				There are two mechanism for doing this, either with a method parameter annotation or by using the keys
+				parameter on the Invalidate annotation.
+				
+				In the following example the keys are annotated	so that only the first two parameters compose the key
+					
+					@Invalidate(name="uk.ltd.woodsideconsultancy.test.Country.Cache")
+					public void clearEntry(@CacheKey String param1, $CacheKey String isoCode, boolean someValue){
+						// do some code
+					}
+					
+				In the following example keys specifies a comma separated list of indexes, starting at zero, to the method which
+				should be used as cache keys. I.e. this will invalidate the entry in the cache named "uk.ltd.woodsideconsultancy.test.Country.Cache"
+				whose key matches the contents of 'isoCode'
+				
+					@Invalidate(name="uk.ltd.woodsideconsultancy.test.Country.Cache",keys="1")
+					public void clearEntry(String param1, String isoCode){
+						// do some code
+					}
+					
+				c) Invalidating all cache entries
+				
+				This is done by specifying the name of the cache to invalidate
+				
+					@Invalidate(name="uk.ltd.woodsideconsultancy.test.Country.Cache")
+					public void clearAllEntries(String param1, String param2, String param3){
+						// do some code
+					}
+			</subsection>
+			<subsection name="cache keys">
+			
+			5. The cache adaptor generates keys for your cache based on the default StringKeyMaker. However
+				you can add you own on a per cache base where for example you know that ids for an entity will
+				suffice as a key.
+				
+				This can be done programatically via the methods in the CacheAdaptor which are similar to
+				the ones used for the caching implementations or via annotations. You must implement the KeyMaker 
+				interface if you wish to do this. For example, 
+				<pre>
+				<font color = 'blue'>
+						private static final String ANOTHER_CACHE = "myCacheName";
+
+						@KeyMakerImplementation
+						private KeyMaker keyMaker;
+					
+						@KeyMakerImplementation(name=ANOTHER_CACHE)
+						private KeyMaker anotherKeyMaker;
+						
+						public void setupCache(){
+							keyMaker = new MyKeyMaker();
+							anotherKeyMaker = new MyKeyMaker();
+						}
+						// or autowired for Spring
+						@Autowired
+						public void setKeyMaker(KeyMaker keyMaker){
+							this.keyMaker = keyMaker;
+						}
+				</font>
+				</pre>
+			</subsection>
+			
+		</section> 
+	</body>
+</document>

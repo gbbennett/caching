@@ -1,0 +1,68 @@
+<?xml version="1.0" ?>
+<!DOCTYPE cache SYSTEM "cachespec.dtd">
+<cache>
+  <cache-entry>
+    <class>command</class>
+       <sharing-policy>not-shared</sharing-policy>
+       <name>uk.ltd.woodsideconsultancy.aop.cache.CacheCommand.class</name>
+       <cache-id>
+          <component type="method" id="getCacheName">
+             <required>true</required >
+          </component>
+          <component type="method" id="getKeys">
+             <required>true</required >
+          </component>
+          <priority>1</priority>
+             <timeout>180</timeout >
+          </cache-id>
+		<dependency-id>dynamapCacheKeyInvalidateAll
+			<component type="method" id="getCacheName">
+				<required>true</required>
+			</component>
+		</dependency-id>          
+		<dependency-id>dynamapCacheKeyInvalidateEntry
+			<component type="method" id="getCacheName">
+				<required>true</required>
+			</component>
+            <component type="method" id="getKeys">
+                <required>true</required >
+            </component>
+		</dependency-id>          
+   </cache-entry>
+	<cache-entry>
+		<class>command</class>
+			<name>uk.ltd.woodsideconsultancy.aop.cache.CacheInvalidationCommand.class</name>
+		<cache-id>
+			<component type="method" id="getCacheName">
+				<required>true</required>
+			</component>
+		</cache-id>
+		<invalidation>dynamapCacheKeyInvalidateAll
+			<component type="method" id="getCacheName">
+				<required>true</required>
+			</component>
+		</invalidation>
+	</cache-entry>
+	<cache-entry>
+		<class>command</class>
+			<name>uk.ltd.woodsideconsultancy.cache.CacheEntryInvalidationCommand.class</name>
+		<cache-id>
+			<component type="method" id="getCacheName">
+				<required>true</required>
+			</component>
+            <component type="method" id="getKeys">
+                <required>true</required >
+            </component>
+		</cache-id>
+		<invalidation>dynamapCacheKeyInvalidateEntry
+			<component type="method" id="getCacheName">
+				<required>true</required>
+			</component>
+            <component type="method" id="getKeys">
+                <required>true</required >
+            </component>
+			
+		</invalidation>
+	</cache-entry>
+   
+</cache>

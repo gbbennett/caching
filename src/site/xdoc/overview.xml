@@ -1,0 +1,19 @@
+<document>
+	<properties>
+		<author email="">Gary Bennett</author>
+		<title>Overview</title>
+	</properties>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<title>Cache Aspects</title>
+	</head>
+	<body>
+		<section name="Cache Aspects - Overview">
+		
+		The Cache Aspect provide a means of providing simple method base caching. The annotations
+		are independent of the caching implementation allowing for example Dynacache based caching
+		to be used in container and ehcache base caching out of container.
+	
+		</section> 
+	</body>
+</document>

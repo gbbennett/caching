@@ -1,0 +1,4 @@
+Build using maven, eg.
+
+mvn install
+mvn site:site will provide documentation
