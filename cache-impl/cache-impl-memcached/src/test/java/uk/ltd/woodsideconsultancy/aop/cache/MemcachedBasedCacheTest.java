@@ -83,7 +83,7 @@ public class MemcachedBasedCacheTest {
     @Test
     public void testGetDefaultTimeout() {
         System.out.println("getDefaultTimeout");
-        MemcachedBasedCache instance = new MemcachedBasedCache();
+        MemcachedBasedCache instance = new MemcachedBasedCache(null);
         int expResult = MemcachedBasedCache.DEFAULT_TIMEOUT;
         int result = instance.getDefaultTimeout();
         assertEquals(expResult, result);
@@ -96,7 +96,7 @@ public class MemcachedBasedCacheTest {
     public void testSetDefaultTimeout() {
         System.out.println("setDefaultTimeout");
         int expResult = 50;
-        MemcachedBasedCache instance = new MemcachedBasedCache();
+        MemcachedBasedCache instance = new MemcachedBasedCache(null);
         instance.setDefaultTimeout(expResult);
         int result = instance.getDefaultTimeout();
         assertEquals(expResult, result);
@@ -108,7 +108,7 @@ public class MemcachedBasedCacheTest {
     @Test
     public void testGetCacheSeconds() {
         System.out.println("getCacheSeconds");
-        MemcachedBasedCache instance = new MemcachedBasedCache();
+        MemcachedBasedCache instance = new MemcachedBasedCache(null);
 
         Map result = instance.getCacheSeconds();
         assertNull(result);
@@ -128,7 +128,7 @@ public class MemcachedBasedCacheTest {
     @Test
     public void testSetCacheSeconds() {
         System.out.println("setCacheSeconds");
-        MemcachedBasedCache instance = new MemcachedBasedCache();
+        MemcachedBasedCache instance = new MemcachedBasedCache(null);
 
         Map result = instance.getCacheSeconds();
         assertNull(result);
@@ -150,7 +150,7 @@ public class MemcachedBasedCacheTest {
         System.out.println("invalidate");
         String cacheName = "fred";
         Object[] keys = {"abc"};
-        MemcachedBasedCache instance = new MemcachedBasedCache();
+        MemcachedBasedCache instance = new MemcachedBasedCache(null);
         Field f = instance.getClass().getDeclaredField("client");
 	f.setAccessible(true);
         f.set(instance, client);
@@ -205,7 +205,7 @@ public class MemcachedBasedCacheTest {
         String cacheName = "fred";
         Object[] keys = {"abc"};
         Object obj = "123";
-        MemcachedBasedCache instance = new MemcachedBasedCache();
+        MemcachedBasedCache instance = new MemcachedBasedCache(null);
         Field f = instance.getClass().getDeclaredField("client");
 	f.setAccessible(true);
         f.set(instance, client);

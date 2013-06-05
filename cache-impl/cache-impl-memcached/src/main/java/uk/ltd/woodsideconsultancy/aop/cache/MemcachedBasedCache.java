@@ -43,8 +43,9 @@ public class MemcachedBasedCache implements CacheInterface {
     private MemcachedClient client;
     private List<MemcachedServer> servers;
     
-    public MemcachedBasedCache(){
+    public MemcachedBasedCache(List<MemcachedServer> servers){
         super();
+        this.servers = servers;
     }
 
     public int getDefaultTimeout() {

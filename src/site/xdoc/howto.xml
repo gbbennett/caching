@@ -153,8 +153,8 @@
 				</font>
 				</pre>
 			</subsection>
-			<subsection name="config">
-			
+
+			<subsection name="configuration">
 			4. You also need to inject the caching implementation into the aspect. In your start up code you can add:-
 				
 				This can be done programatically as below or via annotations. For example, 
@@ -190,7 +190,6 @@
 					}
 				</font>
 				</pre>	
-
 				a) For Dynache
 				<pre>
 				<font color = 'blue'>
@@ -238,7 +237,6 @@
 					&lt;/cache&gt;
 				</font>
 				</pre>
-
 				c) For simple cache implementation
 				<pre>
 				<font color = 'blue'>
@@ -270,102 +268,23 @@
 				</pre>
 				Please note you may have more than one caching implementation per application. 
 				e.g.
-				Map<String,CacheInterface>map = new HashMap<String,CacheInterface>();
+				Map&lt;String,CacheInterface&gt;map = new HashMap&lt;String,CacheInterface&gt;();
                 map.put("othercaching", new HashMapBasedCache());
                 adaptor.setCachingImplementations(map);
                 
                 See cache-test example for more details
                 
-				e) Example with Dynacache and Spring:-
+				e) Example with memcached and Spring:-
 				<pre>
 				<font color = 'blue'>
 					&lt;!-- initialise cache --&gt;
-						&lt;bean id="uk.ltd.woodsideconsultancy.aop.cache.dynamapBasedCache" class="uk.ltd.woodsideconsultancy.aop.cache.DynamapBasedCache" /&gt; 
+						&lt;bean id="uk.ltd.woodsideconsultancy.aop.cache.memcachedBasedCache" class="uk.ltd.woodsideconsultancy.aop.cache.MemcachedBasedCache" /&gt; 
 						&lt;bean id="uk.ltd.woodsideconsultancy.aop.cache.cacheAdaptor" class="uk.ltd.woodsideconsultancy.aop.cache.CacheAdaptor"  
 							factory-method="getInstance"&gt;  
-							&lt;property name="cachingImplementation" ref="uk.ltd.woodsideconsultancy.aop.cache.dynamapBasedCache"/&gt;
+							&lt;property name="cachingImplementation" ref="uk.ltd.woodsideconsultancy.aop.cache.memcachedBasedCache"/&gt;
 						&lt;/bean&gt;
 					</font>
 				</pre>
-			</subsection>
-			<subsection name="Usage">
-			4. Usage
-			
-			The following code shows how to cache access to a method. Please note the parameters and return value of the method MUST be Serializable.
-			
-				a) Caching a method
-				<pre>
-				<font color = 'blue'>
-					@Cache(name="uk.ltd.woodsideconsultancy.test.Country.Cache")
-					public Country lookupCountry(String isoCode){
-						// code to perform the method
-					}
-				</font>
-				</pre>
-				
-				Alternatively in the following example we specify that only the first two params compose the key as these
-				have the CacheKey annotation
-				
-				<pre>
-				<font color = 'blue'>
-					@Cache(name="uk.ltd.woodsideconsultancy.test.Country.Cache")
-					public Country lookupCountry(@CacheKey String isoCode, @CacheKey String lang, boolean someOtherValue){
-						// code to perform the method
-					}
-				</font>
-				</pre>
-			
-				The first time the method is called an entry in the cache corresponding to the method parameters, in this case the isoCode, will be looked up.
-				If no entry is found the method will be called and the result cached. Subsequent calls to this method will return the cached value. The time
-				the entry in the cache lives is up to the configuration for the actual implementation you have chosen.
-				
-				b) Invalidating a cache entry
-				
-				There are two ways that an individual cache entry can be invalidated.
-				
-				i) By invalidating prior to calling a cached method, eg.
-				
-				In this example any cached method called by the method annotated with @Invalidate will
-				have it's cached entry invalidated. Ie. only the entry which matches isoCode will be 
-				invalidated
-				<pre>
-					<font color = 'blue'>
-						@Invalidate 
-						public Country lookupAnotherCountry(String isoCode){
-							return lookupCountry(isoCode);
-						}
-					</font>
-				</pre>
-				
-				ii) By specifying which parameters on a method are the keys to the cache
-				
-				There are two mechanism for doing this, either with a method parameter annotation or by using the keys
-				parameter on the Invalidate annotation.
-				
-				In the following example the keys are annotated	so that only the first two parameters compose the key
-					
-					@Invalidate(name="uk.ltd.woodsideconsultancy.test.Country.Cache")
-					public void clearEntry(@CacheKey String param1, $CacheKey String isoCode, boolean someValue){
-						// do some code
-					}
-					
-				In the following example keys specifies a comma separated list of indexes, starting at zero, to the method which
-				should be used as cache keys. I.e. this will invalidate the entry in the cache named "uk.ltd.woodsideconsultancy.test.Country.Cache"
-				whose key matches the contents of 'isoCode'
-				
-					@Invalidate(name="uk.ltd.woodsideconsultancy.test.Country.Cache",keys="1")
-					public void clearEntry(String param1, String isoCode){
-						// do some code
-					}
-					
-				c) Invalidating all cache entries
-				
-				This is done by specifying the name of the cache to invalidate
-				
-					@Invalidate(name="uk.ltd.woodsideconsultancy.test.Country.Cache")
-					public void clearAllEntries(String param1, String param2, String param3){
-						// do some code
-					}
 			</subsection>
 			<subsection name="cache keys">
 			
@@ -398,7 +317,10 @@
 				</font>
 				</pre>
 			</subsection>
-			
-		</section> 
+
+
+
+	</section>			
+
 	</body>
 </document>
