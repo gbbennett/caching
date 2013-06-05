@@ -13,7 +13,7 @@
 		The Cache Aspect provide a means of caching at method level with annotations.
 
 	    The actual caching implementation is independent of the annotations allowing you
-		to plug in a simple memory based cache, an ehache based cache or an IBM Dynacache
+		to plug in a simple memory based cache, an ehache based cache or a Mecached
 		based cache. By implementing uk.ltd.woodsideconsultancy.aop.cache.CacheInterface you can
 		also implement your own caching.
 	
@@ -30,14 +30,14 @@
 					  &lt;artifactId>cache-aop&lt;/artifactId&gt;
 					  &lt;version>0.1&lt;/version&gt;
 					   &lt;scope>provided&lt;/scope&gt;
-					&lt;/dependency>&lt;
+					&lt;/dependency&lt;
 				
 				</font>
 				</pre>
 				Please update version info according to release then add which ever cache
 				implementation you require:-
 
-				a) For projects requiring IBM dynacache based caching.
+				a) For projects requiring mecached based caching.
 				
 				
 				
@@ -45,16 +45,11 @@
 				<font color = 'blue'>
 					&lt;dependency&gt;
 					  &lt;groupId>uk.ltd.woodsideconsultancy.aop&lt;/groupId&gt;
-					  &lt;artifactId>cache-impl-dynacache&lt;/artifactId&gt;
+					  &lt;artifactId>cache-impl-memcached&lt;/artifactId&gt;
 					  &lt;version>0.1&lt;/version&gt;
 					   &lt;scope>provided&lt;/scope&gt;
 					&lt;/dependency>&lt;
-					&lt;dependency&gt;
-					  &lt;groupId>uk.ltd.woodsideconsultancy.aop&lt;/groupId&gt;
-					  &lt;artifactId>cache-command-dynacache&lt;/artifactId&gt;
-					  &lt;version>0.1&lt;/version&gt;
-					   &lt;scope>provided&lt;/scope&gt;
-					&lt;/dependency>&lt;
+
 				</font>
 				</pre>
 				
@@ -190,7 +185,7 @@
 					}
 				</font>
 				</pre>	
-				a) For Dynache
+				a) For Memcached
 				<pre>
 				<font color = 'blue'>
 						private static CacheAdaptor adaptor;
@@ -198,13 +193,12 @@
 							
 						if(adaptor==null){
 							adaptor = CacheAdaptor.getInstance();
-							adaptor.setCachingImplementation(new DynamapBasedCache());
+							adaptor.setCachingImplementation(new MemcachedBasedCache());
 						}
 				</font>
 				</pre>
 
-				You will also need to merge in the entry for Cachespec.xml found in the cache-impl-dynacache src/test/resource
-				directory.
+
 				
 				b) For Ehcache example which initializes the cache. Should you be using a component that already does this.
 				For example common codes then you do not need to call the create method on the CacheManager as common
@@ -225,7 +219,7 @@
 				</pre>
 
 				Please add an entry for each named cache you have into ehcache.xml or the config for your project. For example the test project
-				for ehcahce uses.
+				for ehcache uses.
 				<pre>
 				<font color = 'blue'>
 					&lt;cache name="uk.ltd.woodsideconsultancy.test.Country.Cache"
