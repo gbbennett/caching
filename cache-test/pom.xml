@@ -79,7 +79,7 @@
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<scope>runtime</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 		  <groupId>uk.ltd.woodsideconsultancy.aop</groupId>
