@@ -30,5 +30,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface CacheKey {
-
+	String style() default "";
+	String format() default "";
 }

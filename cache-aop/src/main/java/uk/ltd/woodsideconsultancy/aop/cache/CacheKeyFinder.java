@@ -16,7 +16,12 @@
  */
 package uk.ltd.woodsideconsultancy.aop.cache;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 
@@ -32,7 +37,22 @@ import uk.ltd.woodsideconsultancy.aop.cache.annotations.CacheKey;
  *
  */
 public class CacheKeyFinder {
+	/**
+	 * formaters format the parameters to define keys
+	 */
+	@SuppressWarnings("rawtypes")
+	private static Map<String, Formater> formaters = new HashMap<String, Formater>();
+	static {
+		formaters.put("date", new Formater<Date,String>(){
 
+			public String format(Date date, String format) {
+				SimpleDateFormat sdf = new SimpleDateFormat(format);
+				return sdf.format(date);
+			}});
+	}
+	public static void addFormater(String name, @SuppressWarnings("rawtypes") Formater formater){
+		formaters.put(name, formater);
+	}
 	/**
 	 * determine keys to use for cache storage based on joinpoint
 	 * these are either the parameters for the method or only those
@@ -40,6 +60,7 @@ public class CacheKeyFinder {
 	 * @param joinPoint
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public static Object[] getKeys(JoinPoint joinPoint){
 		Object keys[] = joinPoint.getArgs();
 		MethodSignature signature =(MethodSignature) joinPoint.getSignature();
@@ -54,7 +75,14 @@ public class CacheKeyFinder {
     		for(Annotation[] anos : annotations){
     			for(Annotation ano : anos){
     				if(ano.annotationType().equals(CacheKey.class)){
-    					keyList.add(keys[paramIdx]);
+    					CacheKey sk = (CacheKey)ano;
+    					@SuppressWarnings("rawtypes")
+						Formater formater = formaters.get(sk.style());
+    					if(formater != null){
+    						keyList.add(formater.format(keys[paramIdx],sk.format()));
+    					} else {
+    						keyList.add(keys[paramIdx]);
+    					}
     				}
     			}
     			paramIdx++;

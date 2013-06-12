@@ -19,6 +19,8 @@ package uk.ltd.woodsideconsultancy.aop.cache;
 import static org.junit.Assert.*;
 
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -34,7 +36,8 @@ public class CacheKeyFinderTest {
 	private JoinPoint basicJoinPoint;
 	private JoinPoint simpleJoinPoint;
 	private JoinPoint annotatedJoinPoint;
-	
+	private JoinPoint annotatedDateJoinPoint;
+	private Date date = new Date();
 	@Before
 	public void setUp() throws Exception {
 		basicJoinPoint = initJoinPoint("keyMethodBasic", new Object[0]);
@@ -46,6 +49,10 @@ public class CacheKeyFinderTest {
 		annotatedJoinPoint = initJoinPoint("keyMethodAnnotated",
 				annotatedParams,
 				String.class, int.class);
+		Object[] annotatedDateParams = {"a",date};
+		annotatedDateJoinPoint = initJoinPoint("keyMethodAnnotatedFormat",
+				annotatedDateParams,
+				String.class, Date.class);
 	}
 	private JoinPoint initJoinPoint(String methodName, Object[] params, Class<?>... paramTypes) throws NoSuchMethodException, SecurityException{
 		JoinPoint jp = mock(JoinPoint.class);
@@ -84,6 +91,17 @@ public class CacheKeyFinderTest {
 		assertEquals(99,keys[0]);
 
 	}
+	@Test
+	public void testGetKeysAnnotatedDate() {
+		
+		Object keys[] = CacheKeyFinder.getKeys(annotatedDateJoinPoint);
+		
+		assertTrue(keys.length==1);
+		SimpleDateFormat sdf = new SimpleDateFormat("dd:MM:yy");
+		
+		assertEquals(sdf.format(date),keys[0]);
+
+	}
 	public Object keyMethodBasic(){
 		return null;
 	}
@@ -91,6 +109,9 @@ public class CacheKeyFinderTest {
 		return null;
 	}
 	public Object keyMethodAnnotated(String s, @CacheKey int i){
+		return null;
+	}
+	public Object keyMethodAnnotatedFormat(String s, @CacheKey(style="date",format="dd:MM:yy") Date d){
 		return null;
 	}
 }
