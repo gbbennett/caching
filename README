@@ -1,16 +1,44 @@
-Prerequisites
-
-Maven (tested with version 3.0.3)
 
 Building
 
-Build using maven, eg.
+As out of box build using maven (tested with version 3.0.3), eg.
 
 from top level directory
 mvn install
 mvn site:site will provide documentation
 
 
+Quick example to show usage of caching annotations
+
+Following snippet is example using memcached. Initialisation only needs to be done once and of course could be injected via a framework such as Spring.
+
+public class CachedExample {
+    @CacheImplementation
+    private CacheInterface memcachedBasedCache;
+
+    public CachedExample(){
+        super();
+        MemcachedServer server = new MemcachedServer();
+        server.setServer("localhost");
+        server.setPort(11211);
+        List<MemcachedServer> servers = new ArrayList<MemcachedServer>();
+        servers.add(server);
+        memcachedBasedCache = new MemcachedBasedCache(servers);
+    }
+    @Cache(name="test.Country.Cache")
+    public Country lookupCountry(String isoCode){
+        // this method is cached keyed on isoCode
+    }
+    @Cache(name="test.Language.Cache")
+    public List<Language> lookupLanguages(@CacheKey String isoCode, boolean defaultOnly){
+        // this method is cached keyed only on isoCode
+    }
+    @Cache(name="test.Flights.Cache")
+    public List<Flight> getFlights(@CacheKey String isoCode, 
+        @CacheKey(style="date", format="dd-MM-yy") Date date){
+        // method cached keyed on isoCode and date as string format as shown
+    }
+}
 
 The Cache Aspect provide a means of caching at method level with annotations. The actual caching implementation is independent of the annotations allowing you to plug in a simple memory based cache, an ehache based cache or a Mecached based cache. By implementing uk.ltd.woodsideconsultancy.aop.cache.CacheInterface you can also implement your own caching.
 Using the component
