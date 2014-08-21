@@ -176,8 +176,7 @@ a) For Memcached
 							adaptor.setCachingImplementation(new MemcachedBasedCache());
 						}
 				
-b) For Ehcache example which initializes the cache. Should you be using a component that already does this. For example common codes then you do not need to call the create method on the CacheManager as common codes will do this for you.
-
+b) For Ehcache example which initializes the cache. Should you be using a component that already does this. 
 						private static CacheAdaptor adaptor;
 
 							
